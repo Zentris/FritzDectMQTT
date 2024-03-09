@@ -1,0 +1,16 @@
+[Unit]
+Description=Fritz DECT MQTT Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+NotifyAccess=main
+WorkingDirectory=/home/pi/FritzDectMQTT
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/FritzDectMQTT/FritzDectMQTT.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
