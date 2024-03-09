@@ -1,0 +1,10 @@
+/home/pi/FritzDectMQTT/*log {
+	daily
+	missingok
+	rotate 7
+	notifempty
+	dateext
+	dateformat -%Y-%m-%d
+	compress
+	create
+}
