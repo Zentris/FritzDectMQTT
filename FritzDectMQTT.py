@@ -66,12 +66,10 @@ def abfrageFB(mqttCon):
                 mqttData.update({"AIN": ain})
 
                 result = fc.call_http("getswitchname", ain)
-#                print(result)
                 name:str = result["content"].strip("\n")
                 mqttData["name"] = str(name)
 
                 result = fc.call_http("gettemperature", ain)
-#                print(result)
                 t:str = result["content"].strip("\n")
                 if t.isdigit():
                     temperature = float(t) / 10
@@ -80,11 +78,18 @@ def abfrageFB(mqttCon):
                     mqttData["t-err"] = "NA"
 
                 result = fc.call_http("getswitchpower", ain)
-#                print(result)
                 p: str = result["content"].strip("\n")
                 if p.isdigit():
                     power = float(p) / 1000         # in Watt
                     mqttData["power"] = power
+                else:
+                    mqttData["p-err"] = "NA"
+
+                result = fc.call_http("getswitchenergy", ain)
+                p: str = result["content"].strip("\n")
+                if p.isdigit():
+                    power = float(p) / 1000         # in Watt
+                    mqttData["allpower"] = power
                 else:
                     mqttData["p-err"] = "NA"
 
