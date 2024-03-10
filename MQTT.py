@@ -13,7 +13,7 @@ class MQTT:
     MQTTClient: mqttClient
 
     # -------------------
-    def __init__(self, Logger: logging = None, ConfigData: dict = None, SecretData: dict = None):
+    def __init__(self, ConfigData: dict = None, SecretData: dict = None):
         """
         """
         assert (ConfigData is not None), "No config data given"
@@ -49,8 +49,8 @@ class MQTT:
                     client.reconnect()
                     self.logger.info("Reconnected successfully!")
                     return
-                except Exception as err:
-                    self.logger.error("%s. Reconnect failed. Retrying...", err)
+                except Exception as myErr:
+                    self.logger.error("%s. Reconnect failed. Retrying...", myErr)
 
                 reconnect_delay *= RECONNECT_RATE
                 reconnect_delay = min(reconnect_delay, MAX_RECONNECT_DELAY)
@@ -75,13 +75,6 @@ class MQTT:
                               .format(self.mqttSecData["ip"], self.mqttSecData["port"], retCode))
         except Exception as err:
             self.logger.error("Connection error: {}".format(err.args))
-
-        # if self.MQTTClient.is_connected():
-        #     self.logger.info("Connect Broker {}:{} successfull"
-        #                      .format(self.mqttSecData["ip"], self.mqttSecData["port"]))
-        # else:
-        #     self.logger.error("Connect Broker {}:{} not successfull, no exception given"
-        #                       .format(self.mqttSecData["ip"], self.mqttSecData["port"]))
 
         return self.MQTTClient
 
@@ -110,13 +103,13 @@ if __name__ == '__main__':
     SECRETS_FILE_NAME_YAML= "secrets.yaml"
 
     if not os.path.exists(CONFIG_FILE_NAME_YAML):
-        raise NameError("Config file '{}' is not accessible.".format(CONFIG_FILE_NAME_YAML))
-    with open(CONFIG_FILE_NAME_YAML, 'rt') as f:
+        raise NameError(f"Config file '{CONFIG_FILE_NAME_YAML}' is not accessible.")
+    with open(CONFIG_FILE_NAME_YAML, 'rt', encoding="utf-8") as f:
         configuration = yaml.safe_load(f.read())
 
     if not os.path.exists(SECRETS_FILE_NAME_YAML):
-        raise NameError("Config file '{}' is not accessible.".format(SECRETS_FILE_NAME_YAML))
-    with open(SECRETS_FILE_NAME_YAML, 'rt') as f:
+        raise NameError(f"Config file '{SECRETS_FILE_NAME_YAML}' is not accessible.")
+    with open(SECRETS_FILE_NAME_YAML, 'rt', encoding="utf-8") as f:
         secrets = yaml.safe_load(f.read())
 
     if "logging" not in configuration:

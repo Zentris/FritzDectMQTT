@@ -1,9 +1,12 @@
 # coding: utf8
 
+"""
 # https://fritzconnection.readthedocs.io/en/1.13.2/sources/getting_started.html
 
 # chrome-extension://gphandlahdpffmccakmbngmbjnjiiahp/https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/AHA
 # -HTTP-Interface.pdf
+
+"""
 
 
 import os
@@ -13,12 +16,11 @@ import yaml
 import logging.config
 from logging import Logger
 
-#from fritzconnection import FritzConnection                        # TR-064
-from fritzconnection.core.fritzconnection import FritzConnection    # HTML
+# from fritzconnection import FritzConnection                        # TR-064
+from fritzconnection.core.fritzconnection import FritzConnection  # HTML
 from fritzconnection.core.exceptions import FritzServiceError, FritzHttpInterfaceError, FritzAuthorizationError
 
 import MQTT
-
 
 CONFIG_FILE_NAME_YAML = "configdata.cfg"
 SECRETS_FILE_NAME_YAML = "secrets.yaml"
@@ -28,18 +30,28 @@ configuration: dict
 secrets: dict
 logger: Logger
 
+
 # ---------------
 def abfrageFB(mqttCon):
-    mqttData:dict = {}
+    """
+
+    Args:
+        mqttCon:
+
+    Returns:
+
+    """
+
+    mqttData: dict = {}
     MAX_CONNECTION_TRYS = 10
     connectionerror = 0
 
-    FB:dict = configuration["QUERY"]["FB"]
-    fc: FritzConnection = None
+    FB: dict = configuration["QUERY"]["FB"]
+    fc = None
     ain: str = ""
 
     try:
-        while (fc is None and connectionerror < MAX_CONNECTION_TRYS):
+        while fc is None and connectionerror < MAX_CONNECTION_TRYS:
             try:
                 fc = FritzConnection(address=secrets["Fritzbox"][FB]["ip"],
                                      user=secrets["Fritzbox"][FB]["user"],
@@ -66,11 +78,11 @@ def abfrageFB(mqttCon):
                 mqttData.update({"AIN": ain})
 
                 result = fc.call_http("getswitchname", ain)
-                name:str = result["content"].strip("\n")
+                name: str = result["content"].strip("\n")
                 mqttData["name"] = str(name)
 
                 result = fc.call_http("gettemperature", ain)
-                t:str = result["content"].strip("\n")
+                t: str = result["content"].strip("\n")
                 if t.isdigit():
                     temperature = float(t) / 10
                     mqttData["temp"] = temperature
@@ -80,7 +92,7 @@ def abfrageFB(mqttCon):
                 result = fc.call_http("getswitchpower", ain)
                 p: str = result["content"].strip("\n")
                 if p.isdigit():
-                    power = float(p) / 1000         # in Watt
+                    power = float(p) / 1000  # in Watt
                     mqttData["power"] = power
                 else:
                     mqttData["p-err"] = "NA"
@@ -88,13 +100,13 @@ def abfrageFB(mqttCon):
                 result = fc.call_http("getswitchenergy", ain)
                 p: str = result["content"].strip("\n")
                 if p.isdigit():
-                    power = float(p) / 1000         # in Watt
+                    power = float(p) / 1000  # in Watt
                     mqttData["allpower"] = power
                 else:
                     mqttData["p-err"] = "NA"
 
                 logger.debug("AIN: {} Name: {} T: {}, P: {}".format(ain, name, t, p))
-#                print(json.dumps(mqttData, indent=2, ensure_ascii=False))
+                #                print(json.dumps(mqttData, indent=2, ensure_ascii=False))
 
                 mqttCon.sendData(ain, mqttData)
 
@@ -106,35 +118,34 @@ def abfrageFB(mqttCon):
         logger.error("Fehler: {}", fbexp.args)
 
 
-
 # ---------------
-def main(name):
+def main():
     global configuration
     global secrets
     global logger
 
     if not os.path.exists(CONFIG_FILE_NAME_YAML):
-        raise NameError("Config file '{}' is not accessible.".format(CONFIG_FILE_NAME_YAML))
-    with open(CONFIG_FILE_NAME_YAML, 'rt') as f:
+        raise NameError(f"Config file '{CONFIG_FILE_NAME_YAML}' is not accessible.")
+    with open(CONFIG_FILE_NAME_YAML, 'rt', encoding="utf-8") as f:
         configuration = yaml.safe_load(f.read())
 
     if not os.path.exists(SECRETS_FILE_NAME_YAML):
-        raise NameError("Secret file '{}' is not accessible.".format(SECRETS_FILE_NAME_YAML))
-    with open(SECRETS_FILE_NAME_YAML, 'rt') as f:
+        raise NameError(f"Secret file '{SECRETS_FILE_NAME_YAML}' is not accessible.")
+    with open(SECRETS_FILE_NAME_YAML, 'rt', encoding="utf-8") as f:
         secrets = yaml.safe_load(f.read())
 
     if "logging" not in configuration:
-        raise Exception("No logging configuration in configuration file '{}' available.".format(CONFIG_FILE_NAME_YAML))
+        raise Exception(f"No logging configuration in configuration file '{SECRETS_FILE_NAME_YAML}' available.")
 
     logging.config.dictConfig(configuration["logging"])
     logger = logging.getLogger("__main__")
     logger.info("------------Start program ------------")
-    logger.info("Used Configfile: '{}'".format(CONFIG_FILE_NAME_YAML))
+    logger.info(f"Used Configfile: '{CONFIG_FILE_NAME_YAML}'")
 
-    mqtt = MQTT.MQTT(logger, configuration, secrets)
+    mqtt = MQTT.MQTT(configuration, secrets)
     mqtt.connection = mqtt.connect()
 
-    while (True):
+    while True:
         looptime: int = 10
 
         with open(CONFIG_FILE_NAME_YAML, 'rt') as f:
@@ -142,7 +153,7 @@ def main(name):
 
         abfrageFB(mqtt)
 
-        if configuration["QUERY"]["looptime"] :
+        if configuration["QUERY"]["looptime"]:
             looptime = configuration["QUERY"]["looptime"]
 
         time.sleep(looptime)
@@ -150,6 +161,4 @@ def main(name):
 
 # ===================================
 if __name__ == '__main__':
-    main('PyCharm')
-
-
+    main()

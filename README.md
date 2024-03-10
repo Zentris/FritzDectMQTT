@@ -14,12 +14,12 @@ korrigieren.
 ## Einrichtungsschritte
   * Das File `_secrets.yaml` mit den passenden Fritzbox-Zugangsdaten versehen.
   * Das File `_secrets.yaml` muss dann nach `secrets.yaml` umbenannt werden.
-  * Einrichten eines [Virtuellen Environment für Python](#Python Virtuelles Environment (venv) einrichten)
+  * Einrichten eines [Virtuellen Environment für Python](#Python-Virtuelles-Environment-(venv)-einrichten)
   * Einrichten der [Logfile-Rotation](#Logfile-Rotation)
-  * Einrichten eines [Systemdienstes zum automatischen Starten](#Service (systemctl)) 
+  * Einrichten eines [Systemdienstes zum automatischen Starten](#Service-(systemctl)) 
 
 ### Python Virtuelles Environment (venv) einrichten
-Ein Virtual Environment bietet die Möglichkeit, mehrere parallele< Instanzen des Python-Interpreters aufzusetzen, wobei jede 
+Ein Virtual Environment bietet die Möglichkeit, mehrere parallele Instanzen des Python-Interpreters aufzusetzen, wobei jede 
 mit unterschiedlichen Packages und Konfigurationen ausgestattet werden kann. Jede virtuelle Umgebung enthält eine eigenständige Kopie des Python-Interpreters, einschließlich Kopien der unterstützenden Dienstprogramme.
 
     # Python virtual environent installieren
@@ -57,6 +57,10 @@ Kopiere das File ``fritzdectmqtt.logrotate``:
 
 ### Service (systemctl)
 Das Script läuft permanent, die Abrufen-Abstände der Fritzbox-Werte werden über **looptime** gesteuert (``configdata.cfg``)
+
+###### -- Umkopieren --
+
+    sudo cp cli/fritzdectmqtt.service /etc/systemd/system
 
 ###### -- Aktivieren --
 
