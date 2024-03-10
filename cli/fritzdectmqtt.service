@@ -8,7 +8,7 @@ Type=simple
 NotifyAccess=main
 WorkingDirectory=/home/pi/FritzDectMQTT
 User=pi
-ExecStart=/usr/bin/python3 /home/pi/FritzDectMQTT/FritzDectMQTT.py
+ExecStart=/home/pi/FritzDectMQTT/venv/bin/python /home/pi/FritzDectMQTT/FritzDectMQTT.py
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 
