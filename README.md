@@ -12,6 +12,25 @@ Linuxrechner mit installiertem Python 3.10 oder höher verwendet werden.
   * Das File ``_secrets.yaml`` muss dann nach ``secrets.yaml`` umbenannt werden.
   * Ein MQTT Broker muss eingerichtet und erreichbar sein.
 
+### Python Virtuelles Environment (venv) einrichten
+Ein Virtual Environment bietet die Möglichkeit, mehrere parallele Instanzen des Python-Interpreters aufzusetzen, wobei jede mit unterschiedlichen Packages und Konfigurationen ausgestattet werden kann. Jede virtuelle Umgebung enthält eine eigenständige Kopie des Python-Interpreters, einschließlich Kopien der unterstützenden Dienstprogramme.
+
+    # Python virtual environent installieren
+    sudo apt-get install python3-venv
+
+    # gehe in das Projektverzeichnis
+    cd ~/FritzDectMQTT
+
+    # Virtuelles environment initialisieren
+    python -m venv ~/FritzDectMQTT/venv
+
+    # Einbinden des venv in die aktuelle Sitzungsumgebung
+    source ~/FritzDectMQTT/venv/bin/activate
+
+    # Installieren der für das Projekt notwendigen Python Module
+    pip install -r requirements.txt
+
+
 ### Logfile-Rotation
 Um zu vermeiden, dass das Filesystem des Rechners durch die Logfiles voll läuft, wird die Logrotate Funktionalität des 
 Linux-OS verwendet.

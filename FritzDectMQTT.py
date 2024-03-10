@@ -119,7 +119,7 @@ def main(name):
         configuration = yaml.safe_load(f.read())
 
     if not os.path.exists(SECRETS_FILE_NAME_YAML):
-        raise NameError("Config file '{}' is not accessible.".format(SECRETS_FILE_NAME_YAML))
+        raise NameError("Secret file '{}' is not accessible.".format(SECRETS_FILE_NAME_YAML))
     with open(SECRETS_FILE_NAME_YAML, 'rt') as f:
         secrets = yaml.safe_load(f.read())
 
